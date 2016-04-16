@@ -4,6 +4,9 @@ All Notable changes to `EloquentMeta` will be documented in this file
 
 ## NEXT
 
+## v1.4.5 - 4.16.2016
+- add locale column to support multi language model
+
 ## v1.4.4 - 9.29.2015
 - `Helpers::maybeEncode()` does better check of json data. Closes #17
 

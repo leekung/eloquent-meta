@@ -28,6 +28,7 @@ class MetaTest extends \PHPUnit_Framework_TestCase
             // Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
             $this->db->bootEloquent();
 
+            $this->teardown();
             // Tests table
             Capsule::schema()->create('tests', function($table) {
                 $table->increments('id');
@@ -42,9 +43,11 @@ class MetaTest extends \PHPUnit_Framework_TestCase
                 $table->string('metable_type', 255);
                 $table->string('key', 128);
                 $table->text('value');
+                $table->string('locale', 30)->default('en');
 
                 $table->index('metable_id');
                 $table->index('key');
+                $table->index('locale');
             });
 
             Capsule::insert('insert into tests (name, email) values (?, ?)', ['Nicole', 'nicole@nicole.com']);
@@ -60,8 +63,8 @@ class MetaTest extends \PHPUnit_Framework_TestCase
 
     public function teardown()
     {
-        Capsule::schema()->drop('meta');
-        Capsule::schema()->drop('tests');
+        Capsule::schema()->dropIfExists('meta');
+        Capsule::schema()->dropIfExists('tests');
     }
 
     public static function tearDownAfterClass()
@@ -204,9 +207,11 @@ class MetaTest extends \PHPUnit_Framework_TestCase
             $table->string('metable_type', 255);
             $table->string('key', 128);
             $table->text('value');
+            $table->string('locale', 30)->default('en');
 
             $table->index('metable_id');
             $table->index('key');
+            $table->index('locale');
         });
 
         // Start up the parent
@@ -228,7 +233,7 @@ class MetaTest extends \PHPUnit_Framework_TestCase
         ], $results[0], "failed to get save meta to correct table");
 
         // Last, clean up our tables
-        Capsule::schema()->drop('custom_model_meta');
-        Capsule::schema()->drop('custom_model_parents');
+        Capsule::schema()->dropIfExists('custom_model_meta');
+        Capsule::schema()->dropIfExists('custom_model_parents');
     }
 }

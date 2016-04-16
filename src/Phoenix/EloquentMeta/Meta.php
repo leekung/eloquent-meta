@@ -32,6 +32,7 @@ class Meta extends Model
         'metable_type',
         'key',
         'value',
+        'locale',
     ];
 
     /**

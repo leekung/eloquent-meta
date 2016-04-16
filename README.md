@@ -43,8 +43,9 @@ CREATE TABLE meta
     id INTEGER PRIMARY KEY NOT NULL,
     metable_id INTEGER NOT NULL,
     metable_type TEXT NOT NULL,
-    key TEXT NOT NULL,
-    value TEXT NOT NULL
+    key varchar(30) NOT NULL,
+    value TEXT NOT NULL,
+    locale varchar(30) NULL
 );
 CREATE UNIQUE INDEX meta_key_index ON meta (key);
 CREATE UNIQUE INDEX meta_metable_id_index ON meta (metable_id);
@@ -71,6 +72,7 @@ Then use like this:
 ```php
 $model = SomeModel::find(1);
 $model->getAllMeta();
+$model->setLocale('th'); // default is 'en'
 $model->getMeta('some_key', 'optional default value'); // default value only returned if no meta found.
 $model->updateMeta('some_key', 'New Value');
 $model->deleteMeta('some_key');

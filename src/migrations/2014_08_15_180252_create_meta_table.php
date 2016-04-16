@@ -18,9 +18,11 @@ class CreateMetaTable extends Migration
             $table->string('metable_type', 255);
             $table->string('key', 128);
             $table->text('value');
+            $table->string('locale', 30)->default('en');
 
             $table->index('metable_id');
             $table->index('key');
+            $table->index('locale');
         });
     }
 

@@ -36,7 +36,7 @@ class Helpers
     public static function maybeEncode($value)
     {
         if (is_array($value) || is_object($value)) {
-            $value = json_encode($value);
+            $value = json_encode($value, JSON_UNESCAPED_UNICODE);
         }
 
         return $value;

@@ -4,6 +4,19 @@ use Illuminate\Support\Collection;
 
 trait MetaTrait
 {
+    protected $metaLocale = 'en';
+
+    /**
+     * Set meta locale
+     *
+     * @return \Phoenix\EloquentMeta\MetaTrait
+     */
+    public function setLocale($locale)
+    {
+        $this->metaLocale = $locale;
+        return $this;
+    }
+
     /**
      * Gets all meta data
      *
@@ -11,7 +24,7 @@ trait MetaTrait
      */
     public function getAllMeta()
     {
-        return new Collection($this->meta->lists('value', 'key'));
+        return new Collection($this->meta->where('locale', $this->metaLocale)->lists('value', 'key'));
     }
 
     /**
@@ -26,16 +39,16 @@ trait MetaTrait
     {
         $meta = $this->meta()
             ->where('key', $key)
+            ->where('locale', $this->metaLocale)
             ->get();
 
         if ($getObj) {
             $collection = $meta;
-
         } else {
             $collection = new Collection();
 
             foreach ($meta as $m) {
-                $collection->put($m->id, $m->value);
+                $collection->put($m->id, $m->value, $m->locale);
             }
         }
 
@@ -82,7 +95,7 @@ trait MetaTrait
     {
         $existing = $this->meta()
             ->where('key', $key)
-            ->where('value', Helpers::maybeEncode($value))
+            ->where('locale', $this->metaLocale)
             ->first();
 
         if ($existing) {
@@ -92,6 +105,7 @@ trait MetaTrait
         $meta = $this->meta()->create([
             'key'   => $key,
             'value' => $value,
+            'locale' => $this->metaLocale,
         ]);
 
         return $meta->isSaved() ? $meta : $meta->getErrors();
@@ -109,7 +123,6 @@ trait MetaTrait
 
         if (!$meta) {
             $meta = [];
-
         } elseif (!is_array($meta)) {
             $meta = [$meta];
         }
@@ -142,9 +155,8 @@ trait MetaTrait
             $obj = $this->getEditableItem($meta, $value);
 
             return $obj !== false ? $obj->delete() : false;
-
         } else {
-            return $this->meta()->where('key', $key)->delete();
+            return $this->meta()->where('key', $key)->where('locale', $this->metaLocale)->delete();
         }
     }
 
@@ -170,8 +182,8 @@ trait MetaTrait
                 return false;
             }
 
-            $filtered = $meta->filter(function($m) use ($value) {
-                return $m->value == $value;
+            $filtered = $meta->filter(function ($m) use ($value) {
+                return $m->value == $value && $m->locale == $this->metaLocale;
             });
 
             $obj = $filtered->first();
@@ -179,7 +191,6 @@ trait MetaTrait
             if ($obj == null) {
                 return false;
             }
-
         } else {
             $obj = $meta;
         }
